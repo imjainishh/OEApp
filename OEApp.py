@@ -58,31 +58,40 @@ def init():
     root.mainloop()
 
 def set_home_frame(frame):
+    #Welcome frame
     label_welcome = tk.Label(frame, text="Welcome to Ontario Emergency App \n OEApp", font=("Arial 20"))
     label_welcome.place(relx=0.5, rely=0.5, anchor="center")
 
 def set_911_frame(frame):
+    #Call 911 frames
     pass
 
 def set_511_frame(frame):
+    #Call 511 frames
     pass
 
 def set_fd_frame(frame):
+    #Call fire dept frames
     pass
 
 def set_weather_frame(frame):
+    #Get weather update
     pass
 
 def set_wildfire_frame(frame):
+    #Get wildfire alert
     pass
 
 def set_map_frame(frame):
+    #Show wild fire interactive map
     pass
 
 def set_evacuation_frame(frame):
+    #Evacuation estimate calculator
     pass
 
 def set_about_frame(frame):
+    #About frame
     pass
 
 def show_frame(frame):
