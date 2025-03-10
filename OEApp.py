@@ -79,6 +79,7 @@ def set_911_frame(frame):
     label_911.bind("<Button-1>", on_click_phone)
     label_911.bind("<Enter>", lambda e: label_911.config(fg="darkblue"))
     label_911.bind("<Leave>", lambda e: label_911.config(fg="blue"))
+    label_911.pack(pady=20)
 
 
 def set_511_frame(frame):
