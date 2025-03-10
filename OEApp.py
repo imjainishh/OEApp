@@ -73,6 +73,7 @@ def set_911_frame(frame):
         except Exception as ex:
             frame.clipboard_clear()
             frame.clipboard_append("911")
+            show_toast(frame.winfo_toplevel(), "Number copid to clipboard !")
         label_911.after(200, lambda: label_911.config(fg="blue"))
 
     label_911.bind("<Button-1>", on_click_phone)
@@ -112,6 +113,10 @@ def show_frame(frame):
     #Handle change frame function
     frame.lift()
 
+def show_toast(root, message):
+    toast = tk.Label(root, text=message, bg="black", fg="white", font=("Arial", 10))
+    toast.pack(side="buttom", fill="x", pady=10)
+    toast.after(2000, toast.destroy)
 
 #Global setting don't touch
 if __name__ == "__main__":
