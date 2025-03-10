@@ -1,5 +1,6 @@
 #import library
 import tkinter as tk
+import webbrowser
 
 def init():
     #Don't touch if you doesn't know what it does, left it as is !
@@ -64,7 +65,20 @@ def set_home_frame(frame):
 
 def set_911_frame(frame):
     #Call 911 frames
-    pass
+    label_911 = tk.Label(frame, text="Call 911", font=("Arial 20"), cursor="hand2", fg="red")
+    def on_click_phone(e):
+        label_911.config(fg="darkblue")
+        try:
+            webbrowser.open("tel:911")
+        except Exception as ex:
+            frame.clipboard_clear()
+            frame.clipboard_append("911")
+        label_911.after(200, lambda: label_911.config(fg="blue"))
+
+    label_911.bind("<Button-1>", on_click_phone)
+    label_911.bind("<Enter>", lambda e: label_911.config(fg="darkblue"))
+    label_911.bind("<Leave>", lambda e: label_911.config(fg="blue"))
+
 
 def set_511_frame(frame):
     #Call 511 frames
@@ -97,6 +111,7 @@ def set_about_frame(frame):
 def show_frame(frame):
     #Handle change frame function
     frame.lift()
+
 
 #Global setting don't touch
 if __name__ == "__main__":
