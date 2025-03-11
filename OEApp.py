@@ -1,6 +1,16 @@
 #import library
 import tkinter as tk
 import webbrowser
+import os
+import requests
+from tkinter import messagebox
+from dotenv import load_dotenv
+#Don't touch, it's for environment variables
+load_dotenv()
+API_KEY = os.getenv('API_KEY')
+OPEN_WEATHER_URL = os.getenv('BASE_URL')
+#Global variable
+options = ["Brampton", "Toronto", "Mississauga", "Etobicoke", "North York", "Vaughan", "Sault Ste. Marie"]
 
 def init():
     #Don't touch if you doesn't know what it does, left it as is !
@@ -120,7 +130,49 @@ def set_fd_frame(frame):
 
 def set_weather_frame(frame):
     #Get weather update
-    pass
+    selected_city = tk.StringVar(frame)
+    selected_city.set(options[0])
+    city_label = tk.Label(frame, text="Enter City: ", font=("Arial 15"))
+    city_label.pack(pady=20)
+
+    city_dropdown = tk.OptionMenu(frame, selected_city , *options)
+    city_dropdown.config(font=("Arial 15"))
+    city_dropdown.pack(pady=10)
+
+    city_dsp_label = tk.Label(frame, text="City: ", font=("Arial 15"))
+    city_dsp_label.pack(pady=10)
+
+    temp_label = tk.Label(frame, text="Temperature: ", font=("Arial 15"))
+    temp_label.pack(pady=10)
+
+    humid_label = tk.Label(frame, text="Humidity: ", font=("Arial 15"))
+    humid_label.pack(pady=10)
+
+    weather_label = tk.Label(frame, text="Weather: ", font=("Arial, 15"))
+    weather_label.pack(pady=10)
+
+    wind_label =  tk.Label(frame, text="Wind speed: ", font=("Arial 15"))
+    wind_label.pack(pady=10)
+
+    def update_weather():
+        city = selected_city.get()
+        if not city:
+            messagebox.showwarning("Input error", "Please enter a cinty name")
+            return
+        
+        weather_data = fetch_weather(city)
+        if weather_data:
+            city_dsp_label.config(text=f"City: {weather_data['city']}")
+            temp_label.config(text=f"Temperature: {weather_data['temperature']}°C")
+            humid_label.config(text=f"Humidity: {weather_data['humidity']}%")
+            weather_label.config(text=f"Weather: {weather_data['weather']}")
+            wind_label.config(text=f"Wind Speed: {weather_data['wind_speed']} m/s")
+
+    get_button = tk.Button(frame, text="Get Weather", command=update_weather, font=("Arial 15"))
+    get_button.pack(pady=20)
+
+
+
 
 def set_wildfire_frame(frame):
     #Get wildfire alert
@@ -146,6 +198,25 @@ def show_toast(root, message):
     toast = tk.Label(root, text=message, bg="black", fg="white", font=("Arial", 10))
     toast.pack(side="buttom", fill="x", pady=10)
     toast.after(2000, toast.destroy)
+
+def fetch_weather(city):
+    try:
+        params = {"q": city, "appid": API_KEY, "units": "metric"}
+        res = requests.get(OPEN_WEATHER_URL, params)
+        res.raise_for_status()
+
+        data = res.json()
+        weather_info = {
+            "city": data["name"],
+            "temperature": data["main"]["temp"],
+            "humidity": data["main"]["humidity"],
+            "weather": data["main"]["weather"],
+            "wind_speed": data["main"]["speed"]
+        }
+        return weather_info
+    except requests.exceptions.RequestException as ex:
+        messagebox.showerror("Error", f"Failed to fetch currrent weather data: {ex}")
+        return None
 
 #Global setting don't touch
 if __name__ == "__main__":
