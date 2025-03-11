@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 #Don't touch, it's for environment variables
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
-OPEN_WEATHER_URL = os.getenv('BASE_URL')
+OPEN_WEATHER_URL = os.getenv('BASE_URL_WEATHER')
+OPEN_GEOCODING_URL = os.getenv('BASE_URL_GEOCODING')
 #Global variable
 options = ["Brampton", "Toronto", "Mississauga", "Etobicoke", "North York", "Vaughan", "Sault Ste. Marie"]
 
@@ -145,6 +146,9 @@ def set_weather_frame(frame):
     temp_label = tk.Label(frame, text="Temperature: ", font=("Arial 15"))
     temp_label.pack(pady=10)
 
+    feel_label = tk.Label(frame, text="Feels like: ", font=("Arial 15"))
+    feel_label.pack(pady=10)
+
     humid_label = tk.Label(frame, text="Humidity: ", font=("Arial 15"))
     humid_label.pack(pady=10)
 
@@ -164,9 +168,10 @@ def set_weather_frame(frame):
         if weather_data:
             city_dsp_label.config(text=f"City: {weather_data['city']}")
             temp_label.config(text=f"Temperature: {weather_data['temperature']}°C")
+            feel_label.config(text=f"Feels sike: {weather_data['feels_like']}")
             humid_label.config(text=f"Humidity: {weather_data['humidity']}%")
             weather_label.config(text=f"Weather: {weather_data['weather']}")
-            wind_label.config(text=f"Wind Speed: {weather_data['wind_speed']} m/s")
+            wind_label.config(text=f"Wind speed: {weather_data['wind_speed']} m/s")
 
     get_button = tk.Button(frame, text="Get Weather", command=update_weather, font=("Arial 15"))
     get_button.pack(pady=20)
@@ -201,17 +206,27 @@ def show_toast(root, message):
 
 def fetch_weather(city):
     try:
-        params = {"q": city, "appid": API_KEY, "units": "metric"}
-        res = requests.get(OPEN_WEATHER_URL, params)
-        res.raise_for_status()
+        params_geocoding = {"q": str(city) + ",CA", "appid": API_KEY}
+        res_geocoding = requests.get(OPEN_GEOCODING_URL, params_geocoding)
+        res_geocoding.raise_for_status()
+        data_geocoding = res_geocoding.json()
+        geocoding_info = {
+            'name': data_geocoding[0]['name'],
+            'lat': data_geocoding[0]['lat'],
+            'lon': data_geocoding[0]['lon']
+        }
+        params_weather = {"lat": geocoding_info["lat"], "lon": geocoding_info["lon"], "appid": API_KEY}
+        res_weather = requests.get(OPEN_WEATHER_URL, params_weather)
+        res_weather.raise_for_status()
 
-        data = res.json()
+        data_weather = res_weather.json()
         weather_info = {
-            "city": data["name"],
-            "temperature": data["main"]["temp"],
-            "humidity": data["main"]["humidity"],
-            "weather": data["main"]["weather"],
-            "wind_speed": data["main"]["speed"]
+            "city": data_weather["name"],
+            "temperature": data_weather["main"]["temp"],
+            "feels_like": data_weather["main"]["feels_like"],
+            "humidity": data_weather["main"]["humidity"],
+            "weather": data_weather["weather"][0]["main"],
+            "wind_speed": data_weather["wind"]["speed"]
         }
         return weather_info
     except requests.exceptions.RequestException as ex:
