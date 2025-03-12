@@ -5,6 +5,7 @@ import os
 import requests
 from tkinter import messagebox
 from dotenv import load_dotenv
+import tkintermapview
 #Don't touch, it's for environment variables
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
@@ -129,6 +130,29 @@ def set_fd_frame(frame):
     label_fd.bind("<Leave>", lambda e: label_fd.config(fg="blue"))
     label_fd.pack(pady=20)
 
+def set_map_frame(frame):
+    # Initialize the map widget
+    map_widget = tkintermapview.TkinterMapView(frame, width=700, height=500, corner_radius=0)
+    map_widget.pack(pady=10)
+
+    # Set the default location (e.g., Ontario, Canada) and zoom level
+    map_widget.set_position(51.2538, -85.3232)  # Coordinates for Ontario
+    map_widget.set_zoom(6)
+
+    locations = {
+        "Brampton": (43.7315, -79.7624),
+        "Toronto": (43.651070, -79.347015),
+        "Mississauga": (43.5890, -79.6441),
+        "Etobicoke": (43.6542, -79.5671),
+        "North York": (43.7615, -79.4111),
+        "Vaughan": (43.8563, -79.5085),
+        "Sault Ste. Marie": (46.5219, -84.3461)
+    }
+
+    # Add markers for each location
+    for city, (lat, lon) in locations.items():
+        map_widget.set_marker(lat, lon, text=city)
+
 def set_weather_frame(frame):
     #Get weather update
     selected_city = tk.StringVar(frame)
@@ -178,14 +202,11 @@ def set_weather_frame(frame):
 
 
 
-
 def set_wildfire_frame(frame):
     #Get wildfire alert
     pass
 
-def set_map_frame(frame):
-    #Show wild fire interactive map
-    pass
+
 
 def set_evacuation_frame(frame):
     #Evacuation estimate calculator
