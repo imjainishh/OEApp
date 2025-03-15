@@ -204,8 +204,15 @@ def set_weather_frame(frame):
 
 def set_wildfire_frame(frame):
     #Get wildfire alert
-    pass
+    
 
+    # Wildfire alert frame
+    label_wildfire = tk.Label(frame, text="", font=("Arial", 20), fg="red")
+    label_wildfire.pack(pady=10)
+    
+    button_wildfire = tk.Button(frame, text="View Wildfire Alerts", font=("Arial", 15), fg="white", bg="red", cursor="hand2",
+                                command=lambda: webbrowser.open("https://www.ontario.ca/page/forest-fires"))
+    button_wildfire.pack(pady=20)
 
 
 def set_evacuation_frame(frame):
