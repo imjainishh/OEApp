@@ -216,7 +216,40 @@ def set_wildfire_frame(frame):
 
 
 def set_evacuation_frame(frame):
-    #Evacuation estimate calculator
+    label_title = tk.Label(frame, text="Evacuation Estimation", font=("Arial", 20), fg="red")
+    label_title.pack(pady=20)
+
+    label_population = tk.Label(frame, text="Estimated Population:", font=("Arial", 15))
+    label_population.pack()
+    entry_population = tk.Entry(frame, font=("Arial", 15))
+    entry_population.pack(pady=10)
+
+    label_routes = tk.Label(frame, text="Available Exit Routes:", font=("Arial", 15))
+    label_routes.pack()
+    entry_routes = tk.Entry(frame, font=("Arial", 15))
+    entry_routes.pack(pady=10)
+
+    result_label = tk.Label(frame, text="", font=("Arial", 15), fg="blue")
+    result_label.pack(pady=10)
+
+    def calculate_evacuation():
+        try:
+            population = int(entry_population.get())
+            routes = int(entry_routes.get())
+            if population <= 0 or routes <= 0:
+                result_label.config(text="Please enter valid numbers.")
+                return
+
+            avg_speed = 1.2  # Average walking speed in m/s
+            route_capacity = 500  # Average people per exit per minute
+            estimated_time = (population / (routes * route_capacity)) * 60  # in minutes
+
+            result_label.config(text=f"Estimated Evacuation Time: {estimated_time:.2f} minutes")
+        except ValueError:
+            result_label.config(text="Invalid input! Enter numbers only.")
+
+    btn_calculate = tk.Button(frame, text="Calculate Time", command=calculate_evacuation, font=("Arial", 15))
+    btn_calculate.pack(pady=10)
     pass
 
 def set_about_frame(frame):
